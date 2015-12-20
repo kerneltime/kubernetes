@@ -1,0 +1,34 @@
+---
+clone:
+  path: github.com/kubernetes/kubernetes
+
+compose:
+  etcd:
+    image: gcr.io/google_containers/etcd:2.2.1
+    net: host
+    command: /usr/local/bin/etcd --addr=127.0.0.1:4001 --bind-addr=0.0.0.0:4001 --data-dir=/var/etcd/data
+
+build:
+  image: gcr.io/google_containers/kubekins-test
+  environment:
+    GOCOVMODE: "count"
+    GO15VENDOREXPERIMENT: "1"
+    KUBE_RACE: "-race"
+    KUBE_COVER: "n"
+    KUBE_JUNIT_REPORT_DIR: "/tmp/artifacts"
+    KUBE_KEEP_VERBOSE_TEST_OUTPUT: y
+    KUBE_TIMEOUT: "-timeout 300s"
+    KUBE_INTEGRATION_TEST_MAX_CONCURRENCY: "4"
+    LOG_LEVEL: "4"
+    KUBE_TEST_API_VERSIONS: "v1,extensions/v1beta1"
+    KUBE_TEST_ETCD_PREFIXES: "registry"
+  commands:
+    - mkdir -p /workspace/artifacts
+    - go get github.com/tools/godep
+    - go get github.com/jstemmer/go-junit-report
+    - ./hack/build-go.sh
+    - godep go install ./...
+    - ./hack/verify-all.sh -v
+
+
+
