@@ -30,8 +30,8 @@ build:
     - ./hack/build-go.sh
     - godep go install ./...
     - ./hack/install-etcd.sh
-    - ./hack/verify-all.sh -v
-    #- make verify BRANCH=$$BRANCH
+    #- ./hack/verify-all.sh -v
+    - make verify BRANCH=$$BRANCH
     - ./hack/test-go.sh -- -p=2
     - ./hack/test-cmd.sh
     - ./hack/test-integration.sh
