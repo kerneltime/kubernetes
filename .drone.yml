@@ -18,9 +18,13 @@ build:
     KUBE_TEST_ETCD_PREFIXES: registry
   volumes:
     - "/var/run/docker.sock:/var/run/docker.sock"
-    - "/usr/bin/docker:/bin/docker"
   commands:
     - mkdir -p /workspace/artifacts
+    - apt-get install -yqq apt-transport-https
+    - apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+    - echo 'deb https://apt.dockerproject.org/repo debian-jessie main' > /etc/apt/sources.list.d/docker.list
+    - apt-get update
+    - apt-get install -yqq docker-engine
     - go get github.com/tools/godep
     - go get github.com/jstemmer/go-junit-report
     - ./hack/build-go.sh
