@@ -10,10 +10,16 @@ clone:
 
 build:
   image: gcr.io/google_containers/kubekins-test
+  environment:
+    #REPO_DIR: "/drone/src/k8s.io/kubernetes"
+    PATH: "$GOPATH/bin:./third_party/etcd:$PATH"
+  #volumes:
+    #- "/var/run/docker.sock:/var/run/docker.sock"
+    #- "/usr/bin/docker:/bin/docker"
   commands:
     - mkdir -p /workspace/artifacts
     - go get github.com/tools/godep
-    #- go get github.com/jstemmer/go-junit-report
+    - go get github.com/jstemmer/go-junit-report
     - ./hack/install-etcd.sh
     - ./hack/build-go.sh
     - make verify BRANCH=$$BRANCH
