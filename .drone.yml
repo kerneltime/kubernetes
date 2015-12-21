@@ -6,7 +6,7 @@ build:
   image: gcr.io/google_containers/kubekins-test
   environment:
     REPO_DIR: "/drone/src/k8s.io/kubernetes"
-    PATH: "$GOPATH/bin:$PWD/third_party/etcd:/usr/local/go/bin:$PATH"
+    PATH: "/drone/bin:/drone/src/k8s.io/kubernetes/third_party/etcd:/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     KUBE_RACE: "-race"
     KUBE_COVER: "n"
     KUBE_JUNIT_REPORT_DIR: "/workspace/artifacts"
