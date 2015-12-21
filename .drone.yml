@@ -2,11 +2,11 @@
 clone:
   path: k8s.io/kubernetes
 
-compose:
-  etcd:
-    image: gcr.io/google_containers/etcd:2.2.1
-    net: host
-    command: /usr/local/bin/etcd --addr=127.0.0.1:4001 --bind-addr=0.0.0.0:4001 --data-dir=/var/etcd/data
+#compose:
+  #etcd:
+    #image: gcr.io/google_containers/etcd:2.2.1
+    #net: host
+    #command: /usr/local/bin/etcd --addr=127.0.0.1:4001 --bind-addr=0.0.0.0:4001 --data-dir=/var/etcd/data
 
 build:
   image: gcr.io/google_containers/kubekins-test
@@ -14,6 +14,7 @@ build:
     - mkdir -p /workspace/artifacts
     - go get github.com/tools/godep
     #- go get github.com/jstemmer/go-junit-report
+    - ./hack/install-etcd.sh
     - ./hack/build-go.sh
     - make verify BRANCH=$$BRANCH
     #- godep go install ./...
