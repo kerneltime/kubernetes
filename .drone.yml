@@ -2,33 +2,33 @@
 clone:
   path: k8s.io/kubernetes
 
-#compose:
-  #etcd:
-    #image: gcr.io/google_containers/etcd:2.2.1
-    #net: host
-    #command: /usr/local/bin/etcd --addr=127.0.0.1:4001 --bind-addr=0.0.0.0:4001 --data-dir=/var/etcd/data
-
 build:
   image: gcr.io/google_containers/kubekins-test
   environment:
-    #REPO_DIR: "/drone/src/k8s.io/kubernetes"
-    PATH: "$GOPATH/bin:./third_party/etcd:$PATH"
-  #volumes:
-    #- "/var/run/docker.sock:/var/run/docker.sock"
-    #- "/usr/bin/docker:/bin/docker"
+    REPO_DIR: "/drone/src/k8s.io/kubernetes"
+    PATH: "$GOPATH/bin:$PWD/third_party/etcd:/usr/local/go/bin:$PATH"
+    KUBE_RACE: "-race"
+    KUBE_COVER: "n"
+    KUBE_JUNIT_REPORT_DIR: "/workspace/artifacts"
+    KUBE_KEEP_VERBOSE_TEST_OUTPUT: "y"
+    KUBE_TIMEOUT: "-timeout 300s"
+    KUBE_INTEGRATIONTEST_MAX_CONCURRENCY: "4"
+    LOG_LEVEL: "4"
+    KUBE_TEST_API_VERSIONS: "v1,extensions/v1beta1"
+    KUBE_TEST_ETCD_PREFIXES: registry
+  volumes:
+    - "/var/run/docker.sock:/var/run/docker.sock"
+    - "/usr/bin/docker:/bin/docker"
   commands:
     - mkdir -p /workspace/artifacts
     - go get github.com/tools/godep
     - go get github.com/jstemmer/go-junit-report
-    - ./hack/install-etcd.sh
     - ./hack/build-go.sh
-    - make verify BRANCH=$$BRANCH
-    #- godep go install ./...
+    - godep go install ./...
+    - ./hack/install-etcd.sh
     #- ./hack/verify-all.sh -v
+    - make verify BRANCH=$$BRANCH
     #- ./hack/test-go.sh -- -p=2
     #- ./hack/test-cmd.sh
     #- ./hack/test-integration.sh
     #- ./hack/test-update-storage-objects.sh
-
-
-
